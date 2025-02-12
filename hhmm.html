@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Transacción Worldcoin</title>
+  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <style>
+    .form-container {
+      max-width: 600px;
+      margin: 2rem auto;
+      padding: 2rem;
+      box-shadow: 0 0 15px rgba(0,0,0,0.1);
+      background: white;
+      border-radius: 8px;
+    }
+    .modal {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      width: 90%;
+      max-width: 400px;
+      text-align: center;
+    }
+    .modal.active {
+      display: block;
+    }
+    .buttons {
+      margin-top: 20px;
+      display: flex;
+      justify-content: space-between;
+    }
+    button {
+      padding: 10px 20px;
+      border: none;
+      background-color: #007bff;
+      color: white;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+<body class="bg-light">
+  <div class="container">
+    <div class="form-container">
+      <h3 class="text-center mb-4">Transacción de Worldcoin (WLD)</h3>
+      <form id="transactionForm">
+        <div class="form-group">
+          <label>Cantidad de WLD:</label>
+          <input type="number" step="0.01" class="form-control" name="cantidad_wld" id="cantidad" required>
+        </div>
+        <div class="form-group">
+          <label>Valor sin comisión (S/):</label>
+          <input type="text" class="form-control" name="monto" id="valor-sin-comision" readonly>
+        </div>
+        <div class="form-group">
+          <label>Comisión (10%):</label>
+          <input type="text" class="form-control" name="comision" id="comision" readonly>
+        </div>
+        <div class="form-group">
+          <label>Total a recibir (S/):</label>
+          <input type="text" class="form-control" name="total" id="total" readonly>
+        </div>
+        <div class="form-group">
+          <label>Método de pago:</label>
+          <select class="form-control" name="metodo_pago" required>
+            <option value="Yape">Yape</option>
+            <option value="Plin">Plin</option>
+            <option value="Transferencia">Transferencia</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Número de celular:</label>
+          <input type="tel" class="form-control" name="telefono" pattern="[0-9]{9}" required>
+        </div>
+        <div class="form-group">
+          <label>Nombre:</label>
+          <input type="text" class="form-control" name="nombre" required>
+        </div>
+        <div class="form-group">
+          <label>Apellido:</label>
+          <input type="text" class="form-control" name="apellido" required>
+        </div>
+        <div class="form-group">
+          <label>Correo electrónico:</label>
+          <input type="email" class="form-control" name="email" required>
+        </div>
+        <input type="hidden" name="código_confirmación" id="codigo_confirmacion">
+        <button type="submit" class="btn btn-primary btn-block mt-4">Confirmar Transacción</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modales -->
+  <div class="modal" id="modal1">
+    <h2>Resumen de tu Transacción</h2>
+    <p>Estimado/a <span id="nombreUsuario"></span>, agradecemos tu confianza.</p>
+    <p><strong>Detalles de la Transacción:</strong></p>
+    <p>Cantidad de WLD: <span id="cantidadWLD"></span><br>Valor sin comisión: <span id="monto"></span><br>Comisión (10%): <span id="comisionModal"></span><br>Total a recibir: <span id="totalModal"></span><br>Fecha y Hora: <span id="fechaHora"></span><br>Código de Confirmación: <span id="codigoConfirmacion"></span></p>
+    <div class="buttons">
+      <button onclick="nextModal(1)">Siguiente →</button>
+    </div>
+  </div>
+  
+  <div class="modal" id="modal2">
+    <h2>Pasos para completar tu transacción</h2>
+    <p>1. Accede a tu aplicación World App.<br>2. Ingresa a tu cartera y selecciona la opción “Más”.<br>3. Elige “Retirar” y selecciona “Worldcoin”.<br>4. Selecciona “App de Cripto” y luego “World Chain”.<br>5. En el apartado correspondiente, selecciona “Otros”.<br>6. Ingresa la dirección de billetera: <strong>0xf88b7a97087e63e1c7cd2264f58bc290a37db4f1</strong>.<br>7. Introduce la cantidad exacta y confirma la operación.<br>8. Guarda el comprobante.</p>
+    <div class="buttons">
+      <button onclick="prevModal(2)">← Anterior</button>
+      <button onclick="nextModal(2)">Siguiente →</button>
+    </div>
+  </div>
+
+  <div class="modal" id="modal3">
+    <h2>Confirmación de tu operación</h2>
+    <p>Sube el comprobante de tu transacción en el siguiente formulario con el Código de Confirmación: <span id="codigoConfirmacion2"></span></p>
+    <p><a href="https://goo.su/puKvd" target="_blank">Formulario de Confirmación</a></p>
+    <div class="buttons">
+      <button onclick="prevModal(3)">← Anterior</button>
+      <button onclick="nextModal(3)">Siguiente →</button>
+    </div>
+  </div>
+
+  <div class="modal" id="modal4">
+    <h2>Información Adicional</h2>
+    <p>Tiempo de procesamiento: 1 hora tras recibir el comprobante.</p>
+    <p>Soporte: Contáctanos al [número de teléfono o WhatsApp].</p>
+    <div class="buttons">
+      <button onclick="prevModal(4)">← Anterior</button>
+      <button onclick="closeAll()">Finalizar</button>
+    </div>
+  </div>
+
+  <script>
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbzInymORrWy1uxCht_OTigbYUubQ53zceGRBDqTrM780iDtaSdnvwGX7vM46tAGMDG_bw/exec';
+    const tipoCambio = 3.75;
+
+    function generarCodigoConfirmacion() {
+      const caracteres = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+      let codigo = '';
+      for (let i = 0; i < 8; i++) {
+        codigo += caracteres.charAt(Math.floor(Math.random() * caracteres.length));
+      }
+      return codigo;
+    }
+
+    async function obtenerPrecioWLD() {
+      try {
+        const respuesta = await fetch('https://api.binance.com/api/v3/ticker/price?symbol=WLDUSDT');
+        const data = await respuesta.json();
+        return parseFloat(data.price);
+      } catch (error) {
+        Swal.fire('Error', 'No se pudo obtener el precio de WLD', 'error');
+        return null;
+      }
+    }
+
+    async function calcularValores() {
+      const cantidad = parseFloat(document.getElementById('cantidad').value) || 0;
+      const precioWLD = await obtenerPrecioWLD();
+      if (precioWLD) {
+        const valorSinComision = cantidad * precioWLD * tipoCambio;
+        const comision = valorSinComision * 0.10;
+        const total = valorSinComision - comision;
+        document.getElementById('valor-sin-comision').value = valorSinComision.toFixed(2);
+        document.getElementById('comision').value = comision.toFixed(2);
+        document.getElementById('total').value = total.toFixed(2);
+      }
+    }
+
+    document.getElementById('cantidad').addEventListener('input', calcularValores);
+
+    document.getElementById('transactionForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+
+      const codigoConfirmacion = generarCodigoConfirmacion();
+      document.getElementById('codigo_confirmacion').value = codigoConfirmacion;
+
+      const cantidad = document.getElementById('cantidad').value;
+      const valorSinComision = document.getElementById('valor-sin-comision').value;
+      const comision = document.getElementById('comision').value;
+      const total = document.getElementById('total').value;
+      const nombre = document.getElementsByName('nombre')[0].value;
+      const fechaHora = new Date().toLocaleString();
+
+      // Llenar datos en el modal
+      document.getElementById('nombreUsuario').textContent = nombre;
+      document.getElementById('cantidadWLD').textContent = cantidad;
+      document.getElementById('monto').textContent = valorSinComision;
+      document.getElementById('comisionModal').textContent = comision;
+      document.getElementById('totalModal').textContent = total;
+      document.getElementById('fechaHora').textContent = fechaHora;
+      document.getElementById('codigoConfirmacion').textContent = codigoConfirmacion;
+      document.getElementById('codigoConfirmacion2').textContent = codigoConfirmacion;
+
+      // Mostrar el primer modal
+      document.getElementById('modal1').classList.add('active');
+
+      const emailContent = `Estimado/a ${nombre},
+
+Agradecemos tu confianza al realizar tu transacción con nosotros. A continuación, te proporcionamos un resumen detallado de tu operación, junto con las instrucciones necesarias para completarla.
+
+Detalles de la Transacción:
+Cantidad de WLD: ${cantidad}
+Valor sin comisión: ${valorSinComision}
+Comisión (10%): ${comision}
+Total a recibir: ${total}
+Fecha y Hora: ${fechaHora}
+Código de Confirmación: ${codigoConfirmacion}
+
+Pasos para completar tu transacción:
+
+Accede a tu aplicación World App.
+Ingresa a tu cartera y selecciona la opción “Más”.
+Elige “Retirar” y selecciona “Worldcoin”.
+Selecciona “App de Cripto” y posteriormente “World Chain”.
+En el apartado correspondiente, selecciona “Otros”.
+Ingresa la siguiente dirección de billetera como destino:
+0xf88b7a97087e63e1c7cd2264f58bc290a37db4f1
+Introduce la cantidad exacta de WLD a retirar y confirma la operación.
+Una vez finalizada la transacción, guarda el comprobante.
+
+Confirmación de tu operación:
+Para completar el proceso, por favor sube el comprobante de tu transacción en el siguiente formulario:
+Dentro del formulario ingrese el código de confirmación y adjunte la imagen del comprobante de la transacción
+👉 [https://goo.su/puKvd]
+
+Información adicional:
+Tiempo de procesamiento:
+Una vez que recibamos el comprobante, procesaremos tu transacción en un plazo de aproximado de 1 hora.
+Soporte:
+Si tienes alguna duda o requieres asistencia, no dudes en responder a este correo o comunicarte con nosotros a través de [número de teléfono o WhatsApp].
+
+Gracias por tu preferencia.
+Estamos comprometidos con brindarte un servicio eficiente y seguro.`;
+
+      const formData = new FormData(this);
+      formData.append('email_content', emailContent);
+
+      try {
+        const response = await fetch(scriptURL, { method: 'POST', body: formData });
+        const data = await response.json();
+        if (data.result === 'success') {
+          Swal.fire(
+            'Éxito',
+            `Transacción registrada con éxito. Código de Confirmación: ${codigoConfirmacion}. Se envió detalle de la operación a su correo y las instrucciones.`,
+            'success'
+          );
+          this.reset();
+        } else {
+          Swal.fire('Error', 'Ocurrió un error al registrar la transacción', 'error');
+        }
+      } catch (error) {
+        Swal.fire('Error', 'Ocurrió un error', 'error');
+      }
+    });
+
+    window.onload = calcularValores;
+
+    // -----------------------------------------
+    // Funcionalidad agregada: Actualización automática del precio cada 5 minutos
+    setInterval(calcularValores, 300000); // 300000 ms = 5 minutos
+
+    // Funciones para manejar los modales
+    function nextModal(current) {
+      document.getElementById('modal' + current).classList.remove('active');
+      document.getElementById('modal' + (current + 1)).classList.add('active');
+    }
+    function prevModal(current) {
+      document.getElementById('modal' + current).classList.remove('active');
+      document.getElementById('modal' + (current - 1)).classList.add('active');
+    }
+    function closeAll() {
+      document.querySelectorAll('.modal').forEach(modal => modal.classList.remove('active'));
+    }
+
+    // -----------------------------------------
+    // Funcionalidad agregada: Reinicio del formulario por inactividad (10 minutos)
+    let inactivityTimer;
+    function resetInactivityTimer() {
+      clearTimeout(inactivityTimer);
+      inactivityTimer = setTimeout(() => {
+        document.getElementById('transactionForm').reset();
+        calcularValores();
+        Swal.fire('Inactividad', 'El formulario se ha reiniciado por inactividad.', 'info');
+      }, 600000); // 600000 ms = 10 minutos
+    }
+    document.addEventListener('mousemove', resetInactivityTimer);
+    document.addEventListener('keydown', resetInactivityTimer);
+    document.addEventListener('click', resetInactivityTimer);
+    document.addEventListener('scroll', resetInactivityTimer);
+    resetInactivityTimer();
+  </script>
+</body>
+</html>
