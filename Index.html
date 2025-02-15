@@ -71,7 +71,7 @@
           <input type="text" class="form-control" name="monto" id="valor-sin-comision" readonly>
         </div>
         <div class="form-group">
-          <label>Comisión (10%):</label>
+          <label>Comisión (15%):</label>
           <input type="text" class="form-control" name="comision" id="comision" readonly>
         </div>
         <div class="form-group">
@@ -113,7 +113,7 @@
     <h2>Resumen de tu Transacción</h2>
     <p>Estimado/a <span id="nombreUsuario"></span>, agradecemos tu confianza.</p>
     <p><strong>Detalles de la Transacción:</strong></p>
-    <p>Cantidad de WLD: <span id="cantidadWLD"></span><br>Valor sin comisión: <span id="monto"></span><br>Comisión (10%): <span id="comisionModal"></span><br>Total a recibir: <span id="totalModal"></span><br>Fecha y Hora: <span id="fechaHora"></span><br>Código de Confirmación: <span id="codigoConfirmacion"></span></p>
+    <p>Cantidad de WLD: <span id="cantidadWLD"></span><br>Valor sin comisión: <span id="monto"></span><br>Comisión (15%): <span id="comisionModal"></span><br>Total a recibir: <span id="totalModal"></span><br>Fecha y Hora: <span id="fechaHora"></span><br>Código de Confirmación: <span id="codigoConfirmacion"></span></p>
     <div class="buttons">
       <button onclick="nextModal(1)">Siguiente →</button>
     </div>
@@ -204,7 +204,7 @@
       const precioWLD = await obtenerPrecioWLD();
       if (precioWLD) {
         const valorSinComision = cantidad * precioWLD * tipoCambio;
-        const comision = valorSinComision * 0.10;
+        const comision = valorSinComision * 0.15;
         const total = valorSinComision - comision;
         document.getElementById('valor-sin-comision').value = valorSinComision.toFixed(2);
         document.getElementById('comision').value = comision.toFixed(2);
@@ -249,7 +249,7 @@ Agradecemos tu confianza al realizar tu transacción con nosotros. A continuaci�
 Detalles de la Transacción:
 Cantidad de WLD: ${cantidad}
 Valor sin comisión: ${valorSinComision}
-Comisión (10%): ${comision}
+Comisión (15%): ${comision}
 Total a recibir: ${total}
 Fecha y Hora: ${fechaHora}
 Código de Confirmación: ${codigoConfirmacion}
