@@ -7,6 +7,116 @@
   <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <style>
+<style>
+
+    #modal2c {
+        max-height: 1500vh; /* Altura máxima del modal */
+        overflow: hidden; /* Oculta el desbordamiento */
+        display: flex;
+        flex-direction: column;
+    }
+
+    /* Contenedor interno para el carrusel */
+    #modal2c .modal-content {
+        flex: 2; /* Ocupa el espacio disponible */
+        overflow-y: auto; /* Añade barra de desplazamiento vertical */
+        padding: 80px; /* Espaciado interno */
+    }
+
+    /* Botones en la parte inferior */
+    #modal2c .buttons {
+        flex-shrink: 0; /* Evita que los botones se reduzcan */
+        margin-top: 50px; /* Espacio entre el contenido y los botones */
+    }
+
+    /* Estilos del carrusel */
+    .slide-container {
+      width: 90%;
+      max-width: 230px;
+      overflow: hidden;
+      position: relative;
+      margin: 20px auto;
+      border: 2px solid #ccc;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .slide {
+      display: none;
+      position: relative;
+      width: 100%;
+      transition: opacity 0.5s ease-in-out;
+    }
+
+    .slide.active {
+      display: block;
+      animation: fadeIn 0.5s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+	
+   .slide img {
+    width: 90%; /* Cambia el ancho al 100% del contenedor */
+    height: auto; /* Mantiene la proporción de la imagen */
+    display: block;
+    }
+
+    .slide-text {
+      text-align: center;
+      padding: 10px;
+      background-color: rgba(0, 0, 0, 0.7);
+      color: white;
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+      font-size: 16px;
+    }
+
+    .slide-nav {
+      position: absolute;
+      top: 50%;
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      transform: translateY(-50%);
+    }
+
+    .slide-nav button {
+      background-color: rgba(0, 0, 0, 0.5);
+      color: white;
+      border: none;
+      padding: 10px;
+      cursor: pointer;
+      font-size: 18px;
+      transition: background-color 0.3s ease;
+    }
+
+    .slide-nav button:hover {
+      background-color: rgba(0, 0, 0, 0.8);
+    }
+
+    .slide-indicators {
+      text-align: center;
+      margin-top: 10px;
+    }
+
+    .slide-indicators span {
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      background-color: #ccc;
+      border-radius: 50%;
+      margin: 0 5px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .slide-indicators span.active {
+      background-color: #333;
+    }
     .form-container {
       max-width: 600px;
       margin: 2rem auto;
@@ -15,20 +125,22 @@
       background: white;
       border-radius: 8px;
     }
-    .modal {
-      display: none;
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      background: white;
-      padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-      width: 90%;
-      max-width: 400px;
-      text-align: center;
-    }
+.modal {
+  display: none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  width: 100%;
+  max-width: 600px;
+  max-height: 90vh; /* Altura máxima del modal */
+  overflow-y: auto; /* Hace que el contenido sea desplazable */
+  text-align: center;
+}
     .modal.active {
       display: block;
     }
@@ -83,7 +195,6 @@
           <select class="form-control" name="metodo_pago" required>
             <option value="Yape">Yape</option>
             <option value="Plin">Plin</option>
-            <option value="Transferencia">Transferencia</option>
           </select>
         </div>
         <div class="form-group">
@@ -118,13 +229,91 @@
       <button onclick="nextModal(1)">Siguiente →</button>
     </div>
   </div>
-  
+
+  <!-- Nuevo modal: Retira tus Worldcoin -->
+  <div class="modal" id="modal2b">
+    <h2>Retira tus Worldcoin</h2>
+    <p>Abre tu aplicación <strong>World App</strong> y retira tus Worldcoin enviándolos a nuestra dirección de billetera. Sigue los pasos que te mostraremos para completar tu transacción. Toma una captura de pantalla del comprobante de retiro y súbela a través del formulario de confirmación. Una vez subas la imagen, procederemos con el envío del dinero a tu Yape o Plin en el tiempo establecido.</p>
+    <p><strong>Detalles de tu retiro:</strong></p>
+    <p>Cantidad de WLD: <span id="cantidadWLD2b"></span><br>Recibirás en soles: <span id="totalModal2b"></span><br>Método de pago: <span id="metodoPago2b"></span></p>
+    <div class="buttons">
+      <button onclick="prevModal('2b')">← Anterior</button>
+      <button onclick="nextModal('2b')">Siguiente →</button>
+    </div>
+  </div>
+
   <div class="modal" id="modal2">
     <h2>Pasos para completar tu transacción</h2>
     <p>1. Accede a tu aplicación World App.<br>2. Ingresa a tu cartera y selecciona la opción “Más”.<br>3. Elige “Retirar” y selecciona “Worldcoin”.<br>4. Selecciona “App de Cripto” y luego “World Chain”.<br>5. En el apartado correspondiente, selecciona “Otros”.<br>6. Ingresa la dirección de billetera: <strong>0xf88b7a97087e63e1c7cd2264f58bc290a37db4f1</strong> <button class="copy-button" onclick="copiarTexto('0xf88b7a97087e63e1c7cd2264f58bc290a37db4f1')">Copiar</button>.<br>7. Introduce la cantidad exacta y confirma la operación.<br>8. Guarda el comprobante.</p>
     <div class="buttons">
       <button onclick="prevModal(2)">← Anterior</button>
       <button onclick="nextModal(2)">Siguiente →</button>
+    </div>
+  </div>
+  <!-- Modal2 con el carrusel -->
+  <div class="modal" id="modal2c">
+    <h2>Pasos para completar tu transacción</h2>
+    <div class="slide-container">
+      <div class="slide active">
+        <img src="https://i.ibb.co/HDRyCdT3/imagen-1.jpg" alt="Paso 1">
+        <div class="slide-text">1. Abre tu aplicación World App</div>
+      </div>
+      <div class="slide">
+        <img src="https://i.ibb.co/zhhTmhSh/imagen-2.jpg" alt="Paso 2">
+        <div class="slide-text">2. Ingresa a tu cartera y selecciona "Más"</div>
+      </div>
+      <div class="slide">
+        <img src="https://i.ibb.co/GQLXJNgV/imagen-3.jpg" alt="Paso 3">
+        <div class="slide-text">3. Selecciona "Retirar"</div>
+      </div>
+      <div class="slide">
+        <img src="https://i.ibb.co/KxPBKms3/imagen-4.jpg" alt="Paso 4">
+        <div class="slide-text">4. Selecciona "Worldcoin"</div>
+      </div>
+      <div class="slide">
+        <img src="https://i.ibb.co/mC4Typ27/imagen-5.jpg" alt="Paso 5">
+        <div class="slide-text">5. Selecciona "App de Cripto"</div>
+      </div>
+      <div class="slide">
+        <img src="https://i.ibb.co/Zzk7zKRz/imagen-6.jpg" alt="Paso 6">
+        <div class="slide-text">6. Selecciona "World Chain"</div>
+      </div>
+      <div class="slide">
+        <img src="https://i.ibb.co/ch4xQHhs/imagen-7.jpg" alt="Paso 7">
+        <div class="slide-text">7. Selecciona "Otros"</div>
+      </div>
+      <div class="slide">
+        <img src="https://i.ibb.co/WCWX5xH/imagen-8.jpg" alt="Paso 8">
+        <div class="slide-text">8. Ingresa esta dirección de billetera o código QR y continúa.<br>0x9A0E749262b0473cB5D2e13164739Af10A8eC0E2</div>
+      </div>
+      <div class="slide">
+        <img src="https://i.ibb.co/Zp6PTvS7/imagen-9.jpg" alt="Paso 9">
+        <div class="slide-text">9. Ingresa la cantidad de WLD que retirarás y continúa.</div>
+      </div>
+      <div class="slide">
+        <img src="https://i.ibb.co/JwxLQRVM/imagen-10.jpg" alt="Paso 10">
+        <div class="slide-text">10. Listo, su retiro fue procesado con éxito.</div>
+      </div>
+      <div class="slide-nav">
+        <button onclick="prevSlide()">&#10094;</button>
+        <button onclick="nextSlide()">&#10095;</button>
+      </div>
+    </div>
+    <div class="slide-indicators">
+      <span class="active" onclick="goToSlide(0)"></span>
+      <span onclick="goToSlide(1)"></span>
+      <span onclick="goToSlide(2)"></span>
+      <span onclick="goToSlide(3)"></span>
+      <span onclick="goToSlide(4)"></span>
+      <span onclick="goToSlide(5)"></span>
+      <span onclick="goToSlide(6)"></span>
+      <span onclick="goToSlide(7)"></span>
+      <span onclick="goToSlide(8)"></span>
+      <span onclick="goToSlide(9)"></span>
+    </div>
+    <div class="buttons">
+      <button onclick="prevModal('2c')">← Anterior</button>
+      <button onclick="nextModal('2c')">Siguiente →</button>
     </div>
   </div>
 
@@ -227,9 +416,10 @@
       const comision = document.getElementById('comision').value;
       const total = document.getElementById('total').value;
       const nombre = document.getElementsByName('nombre')[0].value;
+      const metodoPago = document.getElementsByName('metodo_pago')[0].value;
       const fechaHora = new Date().toLocaleString();
 
-      // Llenar datos en el modal
+      // Llenar datos en los modales
       document.getElementById('nombreUsuario').textContent = nombre;
       document.getElementById('cantidadWLD').textContent = cantidad;
       document.getElementById('monto').textContent = valorSinComision;
@@ -238,6 +428,11 @@
       document.getElementById('fechaHora').textContent = fechaHora;
       document.getElementById('codigoConfirmacion').textContent = codigoConfirmacion;
       document.getElementById('codigoConfirmacion2').textContent = codigoConfirmacion;
+
+      // Llenar datos en el nuevo modal (2b)
+      document.getElementById('cantidadWLD2b').textContent = cantidad;
+      document.getElementById('totalModal2b').textContent = total;
+      document.getElementById('metodoPago2b').textContent = metodoPago;
 
       // Mostrar el primer modal
       document.getElementById('modal1').classList.add('active');
@@ -310,15 +505,33 @@ Estamos comprometidos con brindarte un servicio eficiente y seguro.`;
     // Actualizar el tipo de cambio cada 5 minutos
     setInterval(obtenerTipoCambio, 300000);
 
-    // Funciones para manejar los modales
-    function nextModal(current) {
-      document.getElementById('modal' + current).classList.remove('active');
-      document.getElementById('modal' + (current + 1)).classList.add('active');
-    }
-    function prevModal(current) {
-      document.getElementById('modal' + current).classList.remove('active');
-      document.getElementById('modal' + (current - 1)).classList.add('active');
-    }
+// Script de los modales
+function nextModal(current) {
+    let next;
+    if (current === 1) next = '2b'; // Después del modal1, mostrar modal2b
+    else if (current === '2b') next = 2; // Después del modal2b, mostrar modal2
+    else if (current === 2) next = '2c'; // Después del modal2, mostrar modal2c
+    else if (current === '2c') next = 3; // Después del modal2c, mostrar modal3
+    else if (current === 3) next = 4; // Después del modal3, mostrar modal4
+    else next = current + 1; // Para los demás modales, seguir la secuencia normal
+
+    document.getElementById('modal' + current).classList.remove('active');
+    document.getElementById('modal' + next).classList.add('active');
+}
+
+function prevModal(current) {
+    let prev;
+    if (current === '2b') prev = 1; // Antes del modal2b, mostrar modal1
+    else if (current === 2) prev = '2b'; // Antes del modal2, mostrar modal2b
+    else if (current === '2c') prev = 2; // Antes del modal2c, mostrar modal2
+    else if (current === 3) prev = '2c'; // Antes del modal3, mostrar modal2c
+    else if (current === 4) prev = 3; // Antes del modal4, mostrar modal3
+    else prev = current - 1; // Para los demás modales, seguir la secuencia normal
+
+    document.getElementById('modal' + current).classList.remove('active');
+    document.getElementById('modal' + prev).classList.add('active');
+}
+
     function closeAll() {
       document.querySelectorAll('.modal').forEach(modal => modal.classList.remove('active'));
     }
@@ -338,6 +551,54 @@ Estamos comprometidos con brindarte un servicio eficiente y seguro.`;
     document.addEventListener('click', resetInactivityTimer);
     document.addEventListener('scroll', resetInactivityTimer);
     resetInactivityTimer();
+
+   // Script del carrusel
+let currentSlide = 0;
+const slides = document.querySelectorAll('.slide');
+const indicators = document.querySelectorAll('.slide-indicators span');
+
+function showSlide(index) {
+  slides.forEach((slide, i) => {
+    if (i === index) {
+      slide.classList.add('active');
+    } else {
+      slide.classList.remove('active');
+    }
+  });
+
+  indicators.forEach((indicator, i) => {
+    if (i === index) {
+      indicator.classList.add('active');
+    } else {
+      indicator.classList.remove('active');
+    }
+  });
+}
+
+function nextSlide() {
+  currentSlide = (currentSlide + 1) % slides.length;
+  showSlide(currentSlide);
+}
+
+function prevSlide() {
+  currentSlide = (currentSlide - 1 + slides.length) % slides.length;
+  showSlide(currentSlide);
+}
+
+function goToSlide(index) {
+  currentSlide = index;
+  showSlide(currentSlide);
+}
+
+// Autoplay del carrusel
+let autoplayInterval = setInterval(nextSlide, 5000);
+
+function stopAutoplay() {
+  clearInterval(autoplayInterval);
+}
+// Inicializar el carrusel con la primera diapositiva
+showSlide(0); // Asegura que el carrusel comience desde la imagen 1
+
   </script>
 </body>
 </html>
